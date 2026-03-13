@@ -1,0 +1,15 @@
+export const WORD_POOL: string[] = [
+  'DUCK', 'LUCK', 'STUCK', 'TRUCK', 'PLUCK', 'MUCK', 'CLUCK', 'BUCK',
+  'PANT', 'PLANT', 'RANT', 'ANT', 'SLANT', 'GRANT', 'CHANT',
+  'CAPE', 'CREPE', 'SHAPE', 'APE', 'DRAPE', 'TAPE', 'GRAPE',
+  'RIDDLE', 'FIDDLE', 'MIDDLE', 'GRIDDLE', 'PIDDLE', 'TWIDDLE',
+  'STRUCK', 'YUCK', 'SCHMUCK',
+  'CAKE', 'LAKE', 'FAKE', 'SHAKE', 'SNAKE', 'RAKE', 'FLAKE',
+  'MOON', 'SPOON', 'TUNE', 'LOON', 'BOON', 'PRUNE', 'CROON',
+  'PINK', 'DRINK', 'THINK', 'SINK', 'WINK', 'BRINK', 'SHRINK',
+  'FROG', 'LOG', 'DOG', 'HOG', 'SLOG', 'SMOG', 'CLOG',
+  'HEAT', 'BEAT', 'FEET', 'SEAT', 'TWEET', 'MEET', 'STREET',
+  'DIME', 'LIME', 'RHYME', 'TIME', 'CRIME', 'SLIME', 'CHIME',
+  'BEAR', 'CARE', 'DARE', 'FARE', 'HAIR', 'PAIR', 'STARE',
+  'BOOK', 'COOK', 'HOOK', 'LOOK', 'NOOK', 'SHOOK', 'TOOK',
+];
