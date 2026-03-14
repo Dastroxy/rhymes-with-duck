@@ -85,14 +85,11 @@ export function useGame(roomId: string, playerId: string) {
     });
   }, [roomId, playerId]);
 
-  // When all players are ready: mark all answers revealed and go to 'revealing' phase
-  // (no one-by-one reveal — all shown at once, host then clicks to see scores)
   const advanceToReveal = useCallback(async () => {
     if (!game || !roomId || game.hostId !== playerId) return;
     const allReady = game.playerOrder.every((id) => game.players[id].isReady);
     if (allReady && game.phase === 'writing') {
       const updates: Record<string, unknown> = { phase: 'revealing' };
-      // Mark every player as revealed immediately
       game.playerOrder.forEach((id) => {
         updates[`players.${id}.revealed`] = true;
       });
@@ -100,7 +97,6 @@ export function useGame(roomId: string, playerId: string) {
     }
   }, [game, roomId, playerId]);
 
-  // Host clicks "Reveal Scores" → compute and go to scoring
   const revealScores = useCallback(async () => {
     if (!game || !roomId) return;
     const results = computeRoundResults(game.players, game.playerOrder, game.chuckPlayerId);
@@ -117,15 +113,29 @@ export function useGame(roomId: string, playerId: string) {
 
   const nextRound = useCallback(async () => {
     if (!game || !roomId) return;
+
     const winners = game.playerOrder.filter((id) => game.players[id].score >= 20);
-    const quacked = game.playerOrder.filter((id) => game.players[id].quackLetters === 'QUACK');
-    const allQuacked = quacked.length >= game.playerOrder.length - 1 && game.playerOrder.length > 1;
-    if (winners.length > 0 || allQuacked) {
+    const activePlayers = game.playerOrder.filter((id) => game.players[id].quackLetters !== 'QUACK');
+
+    // End game if someone hit 20 pts, or only 1 (or 0) active players remain
+    if (winners.length > 0 || activePlayers.length <= 1) {
       await updateDoc(doc(db, 'rooms', roomId), { phase: 'game_over' });
       return;
     }
-    const chuckIdx = game.playerOrder.indexOf(game.chuckPlayerId);
-    const nextChuck = game.playerOrder[(chuckIdx + 1) % game.playerOrder.length];
+
+    // Pass Chuck to the next *active* (non-quacked) player
+    const currentChuckIdx = game.playerOrder.indexOf(game.chuckPlayerId);
+    let nextChuck = game.chuckPlayerId;
+    let i = 1;
+    while (i <= game.playerOrder.length) {
+      const candidate = game.playerOrder[(currentChuckIdx + i) % game.playerOrder.length];
+      if (game.players[candidate].quackLetters !== 'QUACK') {
+        nextChuck = candidate;
+        break;
+      }
+      i++;
+    }
+
     await updateDoc(doc(db, 'rooms', roomId), {
       chuckPlayerId: nextChuck,
       phase: 'chuck_picks_word',
